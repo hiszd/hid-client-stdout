@@ -2,6 +2,7 @@ pub mod util;
 use util::*;
 
 #[allow(dead_code)]
+#[derive(Debug, Clone)]
 pub enum Messages {
     LayerChanged(u16),
     Volume(
@@ -14,7 +15,7 @@ pub enum Messages {
 impl TryFrom<&str> for Messages {
     type Error = ();
 
-    fn try_from(s: &str) -> Result<Self, ()> {
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
         use hid_io_client::keyboard_capnp::keyboard::signal::volume::Command;
         let pts = s.split(':').collect::<Vec<&str>>();
         if pts.len() == 2 {
@@ -28,6 +29,10 @@ impl TryFrom<&str> for Messages {
                         .map(|m| m.to_owned())
                         .collect::<Vec<String>>();
                     if vol_pts.len() == 2 {
+                        let cmd: Command = command_from_str(&vol_pts[0]).unwrap();
+                        let vol: u16 = vol_pts[1].parse().unwrap();
+                        Ok(Messages::Volume(cmd, vol, None))
+                    } else if vol_pts.len() == 3 {
                         let cmd: Command = command_from_str(&vol_pts[0]).unwrap();
                         let vol: u16 = vol_pts[1].parse().unwrap();
                         let app: String = vol_pts[2].to_owned();
@@ -52,7 +57,7 @@ impl<'a> From<Messages> for String {
             }
             Messages::Volume(c, v, a) => format!(
                 "volume:{},{},{}",
-                str_from_command(&c),
+                str_from_command(c),
                 v,
                 match a {
                     Some(a) => a,

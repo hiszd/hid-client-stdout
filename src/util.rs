@@ -12,13 +12,13 @@ pub fn command_from_str(s: &str) -> Result<Command, ()> {
     }
 }
 
-pub fn str_from_command(s: &Command) -> &str {
+pub fn str_from_command(s: Command) -> String {
     match s {
-        Command::Set => "set",
-        Command::Inc => "inc",
-        Command::Dec => "dec",
-        Command::Mute => "mute",
-        Command::UnMute => "unmute",
-        Command::ToggleMute => "togglemute",
+        Command::Set => "set".to_string(),
+        Command::Inc => "inc".to_string(),
+        Command::Dec => "dec".to_string(),
+        Command::Mute => "mute".to_string(),
+        Command::UnMute => "unmute".to_string(),
+        Command::ToggleMute => "togglemute".to_string(),
     }
 }
