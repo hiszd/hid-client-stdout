@@ -22,3 +22,14 @@ pub fn str_from_command(s: Command) -> String {
         Command::ToggleMute => "togglemute".to_string(),
     }
 }
+
+pub fn format_command(s: Command) -> String {
+    match s {
+        Command::Set => "Set".to_string(),
+        Command::Inc => "Inc".to_string(),
+        Command::Dec => "Dec".to_string(),
+        Command::Mute => "Mute".to_string(),
+        Command::UnMute => "UnMute".to_string(),
+        Command::ToggleMute => "ToggleMute".to_string(),
+    }
+}
