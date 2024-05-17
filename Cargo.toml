@@ -1,7 +1,8 @@
 [package]
-name = "hid-client-stdout"
+name    = "hid-client-stdout"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 hid-io-client = { path = "../hid-io-core/hid-io-client" }
+hid-io-core   = { path = "../hid-io-core" }

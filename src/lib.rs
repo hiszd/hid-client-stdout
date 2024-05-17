@@ -1,4 +1,7 @@
 pub mod util;
+use std::fmt::Display;
+
+use hid_io_client::capnp::traits::FromStructBuilder;
 use util::*;
 
 #[allow(dead_code)]
@@ -66,4 +69,49 @@ impl<'a> From<Messages> for String {
             ),
         }
     }
+}
+
+#[derive(Debug, Clone)]
+pub struct Node {
+    pub r#type: String,
+    pub name: String,
+    pub serial: String,
+}
+
+impl Display for Node {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}:{}", self.r#type, self.name, self.serial)
+    }
+}
+
+impl TryFrom<String> for Node {
+    type Error = ();
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        let pts = s.split(':').collect::<Vec<&str>>();
+        if pts.len() == 3 {
+            Ok(Node {
+                r#type: pts[0].to_string(),
+                name: pts[1].to_string(),
+                serial: pts[2].to_string(),
+            })
+        } else {
+            Err(())
+        }
+    }
+}
+
+pub fn stdout_from_node(node: hid_io_core::common_capnp::destination::Reader<'_>) -> String {
+    let name_parts = node
+        .get_name()
+        .unwrap_or("")
+        .split(' ')
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>();
+    format!(
+        "{}:{}:{}",
+        node.get_type().unwrap(),
+        name_parts[2],
+        node.get_serial().unwrap_or(""),
+    )
 }
